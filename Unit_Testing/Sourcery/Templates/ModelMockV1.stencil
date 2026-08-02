@@ -1,0 +1,29 @@
+{% macro removeLastCharacter(typeName) %}
+{% if typeName.hasSuffix("?") %}
+{% typeName|removeSuffix:"?" %}
+{% else %}
+{% typeName %}
+{% endif %}
+{% endmacro %}
+
+{% macro setDefaultValue typeName %}
+{% set tipoDato = removeLastCharacter(typeName) %}
+{% if tipoDato == "String" %}
+  "Dummy"
+{% else %}
+  "Algun otro valor"
+{% endif %}
+{% endmacro %}
+
+{% for type in types.classes %}
+class {{ type.name }}Mock: {{ type.name }} {
+    {% for variable in type.variables %}
+    override var {{ variable.name }}: {{ variable.typeName }} {
+        get {
+			return {% call setDefaultValue variable.typeName %}
+        }
+        set { }
+    }
+    {% endfor %}
+}
+{% endfor %}

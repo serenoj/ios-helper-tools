@@ -1,0 +1,37 @@
+{% for type in types.protocols %}
+class {{ type.name }}Mock: {{ type.name }} {
+    {% for variable in type.variables %}
+        var {{ variable.name }}Called = false
+        var {{ variable.name }}ReturnValue: {{ variable.typeName }}?
+        override var {{ variable.name }}: {{ variable.typeName }} {
+            get {
+                {{ variable.name }}Called = true
+                return {{ variable.name }}ReturnValue!
+            }
+            set {
+                {{ variable.name }}Called = true
+                {{ variable.name }}ReturnValue = newValue
+            }
+        }
+    {% endfor %}
+
+    {% for method in type.methods %}
+        var {{ method.name }}Called = false
+        {% if method.returnTypeName %}
+            var {{ method.name }}ReturnValue: {{ method.returnTypeName }}?
+        {% endif %}
+        {% for parameter in method.parameters %}
+            var {{ method.name }}{{ parameter.name|capitalize }}: {{ parameter.typeName }}?
+        {% endfor %}
+        override func {{ method.name }}({% for parameter in method.parameters %}{{ parameter.argumentLabel }} {{ parameter.name }}: {{ parameter.typeName }}{% ifnot forloop.last %}, {% endif %}{% endfor %}){% if method.returnTypeName %} -> {{ method.returnTypeName }}{% endif %} {
+            {{ method.name }}Called = true
+            {% for parameter in method.parameters %}
+                self.{{ method.name }}{{ parameter.name|capitalize }} = {{ parameter.name }}
+            {% endfor %}
+            {% if method.returnTypeName %}
+                return {{ method.name }}ReturnValue!
+            {% endif %}
+        }
+    {% endfor %}
+}
+{% endfor %}

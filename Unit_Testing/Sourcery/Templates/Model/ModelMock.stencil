@@ -1,0 +1,14 @@
+{% for class in types.classes %}
+class {{ class.name }}Mock: {{ class.name }} {
+    
+    // Default Initializer
+    override init() {
+        super.init()
+        {% for property in class.variables %}
+        self.{{ property.name }} = {% if property.unwrappedTypeName == "String" %}"Default value"{% elif property.unwrappedTypeName == "Int" %}0{% elif property.unwrappedTypeName == "Double" %}0.00{% elif property.unwrappedTypeName == "Bool" %}false{% elif property.unwrappedTypeName == "Date" %}Date(){% elif property.unwrappedTypeName == "Decimal" %}0.00{% else %}{{ property.unwrappedTypeName }}(){% endif %}
+        {% endfor %}
+    }
+    
+    // Other methods or properties for {{ class.name }}Mock if needed
+}
+{% endfor %}

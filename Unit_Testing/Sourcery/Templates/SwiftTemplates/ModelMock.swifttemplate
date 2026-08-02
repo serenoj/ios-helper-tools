@@ -1,0 +1,42 @@
+<% func setDefaultValue(_ typeName: String) -> String {
+    if typeName == "String" {
+        return #""Dummy""#
+    } else if typeName == "Int" {
+        return "0"
+    } else if typeName == "Double" {
+        return "0.0"
+    } else if typeName == "Float" {
+        return "0.0"
+    } else if typeName == "Bool" {
+        return "false"
+    } else if typeName == "Date" {
+        return "Date()"
+    } else if typeName == "URL" {
+        return #"URL(string: "https://dummy.url")!"#
+    } else if typeName.hasPrefix("[") && typeName.hasSuffix("]") {
+        let unwrappedType = String(typeName.dropFirst().dropLast())
+        return "[\(unwrappedType)()"
+    } else {
+        return "\(typeName)()"
+    }
+}
+
+func defaultValue(_ typeName: String) -> String {
+    if typeName.hasSuffix("?") {
+        let unwrappedType = String(typeName.dropLast())
+        return setDefaultValue(unwrappedType) 
+    } else {
+        return setDefaultValue(typeName)
+    }
+}
+
+for type in types.classes { %>
+class <%= type.name %>Mock: <%= type.name %> {
+    <% for variable in type.variables { %>
+    override var <%= variable.name %>: <%= variable.typeName %> {
+        get { return <%= defaultValue(variable.typeName) %> }
+        set { }
+    }
+    <% } %>
+}
+<% } %>
