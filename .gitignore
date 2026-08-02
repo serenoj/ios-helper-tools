@@ -42,3 +42,10 @@ Pods/
 *.xccheckout
 *.xcscmblueprint
 
+
+# Override global Sourcery* ignore for this toolkit
+!**/Sourcery/**
+!**/sourcery*/**
+!Sourcery.yml
+!**/*.stencil
+!**/*.swifttemplate
